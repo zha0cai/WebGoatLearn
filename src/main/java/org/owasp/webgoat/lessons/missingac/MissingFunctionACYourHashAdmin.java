@@ -59,7 +59,7 @@ public class MissingFunctionACYourHashAdmin extends AssignmentEndpoint {
     // if not admin then return 403
 
     var user = userRepository.findByUsername("Jerry");
-    var displayUser = new DisplayUser(user, PASSWORD_SALT_ADMIN);
+    var displayUser = new DisplayUser(user, PASSWORD_SALT_ADMIN); // 使用强 salt 生成 hash
     if (userHash.equals(displayUser.getUserHash())) {
       return success(this).feedback("access-control.hash.success").build();
     } else {
