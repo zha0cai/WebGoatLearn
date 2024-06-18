@@ -49,8 +49,15 @@ public class HijackSessionAuthenticationProvider implements AuthenticationProvid
   protected static final int MAX_SESSIONS = 50;
 
   private static final DoublePredicate PROBABILITY_DOUBLE_PREDICATE = pr -> pr < 0.75;
+
+  /**
+   * 一个静态常量 Supplier<Authentication> 对象，用于提供 Authentication 实例 使用 lambda 表达式定义 Supplier，返回一个构建好的
+   * Authentication 对象 通过 Instant.now() 获取当前时间对象，再通过 toEpochMilli() 方法将 Instant 转换为自 Unix
+   * 纪元（1970-01-01T00:00:00Z）以来的毫秒数 即生成一个 id-时间戳 的 sessionid
+   */
   private static final Supplier<String> GENERATE_SESSION_ID =
       () -> ++id + "-" + Instant.now().toEpochMilli();
+
   public static final Supplier<Authentication> AUTHENTICATION_SUPPLIER =
       () -> Authentication.builder().id(GENERATE_SESSION_ID.get()).build();
 
@@ -59,23 +66,32 @@ public class HijackSessionAuthenticationProvider implements AuthenticationProvid
     if (authentication == null) {
       return AUTHENTICATION_SUPPLIER.get();
     }
-
+    // 判断 id 是否为空，不为空判断是否存在 session 中，如果存在则表示已授权
     if (StringUtils.isNotEmpty(authentication.getId())
         && sessions.contains(authentication.getId())) {
       authentication.setAuthenticated(true);
       return authentication;
     }
 
+    // 如果 id 为空，创建 SessionID
     if (StringUtils.isEmpty(authentication.getId())) {
       authentication.setId(GENERATE_SESSION_ID.get());
     }
 
+    /**
+     * 创建自动登录 SessionID 通过 PROBABILITY_DOUBLE_PREDICATE.test 判断该 sessionid 是否存入 session 中
+     * 用来模拟实际网络系统中存在已经登录的 session 这样就可以通过 session 的规律爆破 session 登录其他用户【漏洞点】
+     */
     authorizedUserAutoLogin();
 
     return authentication;
   }
 
   protected void authorizedUserAutoLogin() {
+    /** 生成一个 0.0 到 1.0 之间的随机双精度浮点数，并测试它是否符合概率条件 这里需要生成 < 0.75
+     * 如果符合条件，就生成一个 sessionid 添加到 session 中
+     * 注意，这里和返回到 setCookie 的不是同一个 sessionId
+     * */
     if (!PROBABILITY_DOUBLE_PREDICATE.test(ThreadLocalRandom.current().nextDouble())) {
       Authentication authentication = AUTHENTICATION_SUPPLIER.get();
       authentication.setAuthenticated(true);

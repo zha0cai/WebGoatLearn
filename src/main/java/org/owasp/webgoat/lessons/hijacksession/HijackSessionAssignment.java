@@ -66,10 +66,13 @@ public class HijackSessionAssignment extends AssignmentEndpoint {
       HttpServletResponse response) {
 
     Authentication authentication;
-    if (StringUtils.isEmpty(cookieValue)) {
+    if (StringUtils.isEmpty(cookieValue)) { // 判断 cookie 是否为空，为空则创建否则验证授权状态
       authentication =
           provider.authenticate(
-              Authentication.builder().name(username).credentials(password).build());
+              Authentication.builder()
+                  .name(username)
+                  .credentials(password)
+                  .build()); // 通过 Builder 注解调用构造方法创建 Authentication 对象
       setCookie(response, authentication.getId());
     } else {
       authentication = provider.authenticate(Authentication.builder().id(cookieValue).build());
