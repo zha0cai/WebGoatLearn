@@ -22,11 +22,13 @@
 
 package org.owasp.webgoat.lessons.cryptography;
 
+import com.thoughtworks.xstream.core.util.Base64Encoder;
 import jakarta.servlet.http.HttpServletRequest;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
 import java.security.interfaces.RSAPublicKey;
+import java.util.Base64;
 import javax.xml.bind.DatatypeConverter;
 import lombok.extern.slf4j.Slf4j;
 import org.owasp.webgoat.container.assignments.AssignmentEndpoint;
@@ -73,6 +75,7 @@ public class SigningAssignment extends AssignmentEndpoint {
         modulus; /* used to validate the modulus of the public key but might need to be corrected */
     KeyPair keyPair = (KeyPair) request.getSession().getAttribute("keyPair");
     RSAPublicKey rsaPubKey = (RSAPublicKey) keyPair.getPublic();
+
     if (tempModulus.length() == 512) {
       tempModulus = "00".concat(tempModulus);
     }
