@@ -74,6 +74,10 @@ public class SqlInjectionLesson5 extends AssignmentEndpoint {
 
   protected AttackResult injectableQuery(String query) {
     try (Connection connection = dataSource.getConnection()) {
+        /**
+         * Java 7 引入的 try-with-resources 语法
+         * 它用于在 try 块中声明一个或多个资源，并确保这些资源在块结束时自动关闭。
+         */
       try (Statement statement =
           connection.createStatement(
               ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE)) {
