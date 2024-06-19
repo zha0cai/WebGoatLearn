@@ -84,6 +84,7 @@ public class SqlInjectionLesson9 extends AssignmentEndpoint {
       int newSumSalariesOfOtherEmployees = this.getSumSalariesOfOtherEmployees(connection);
       if (newJohnSalary > oldMaxSalary
           && newSumSalariesOfOtherEmployees == oldSumSalariesOfOtherEmployees) {
+        // 注意其他员工的工资总额不能改变
         // success commit
         connection.commit(); // need execute not executeQuery
         connection.setAutoCommit(true);

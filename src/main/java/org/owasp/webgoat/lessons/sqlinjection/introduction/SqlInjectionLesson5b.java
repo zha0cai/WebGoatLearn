@@ -61,13 +61,15 @@ public class SqlInjectionLesson5b extends AssignmentEndpoint {
   protected AttackResult injectableQuery(String login_count, String accountName) {
     String queryString = "SELECT * From user_data WHERE Login_Count = ? and userid= " + accountName;
     try (Connection connection = dataSource.getConnection()) {
+      // 占位符 + 预编译 prepareStatement
       PreparedStatement query =
           connection.prepareStatement(
               queryString, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
 
       int count = 0;
       try {
-        count = Integer.parseInt(login_count);
+        count = Integer.parseInt(login_count); // 只占位这个参数，在这进行预编译设置
+        // accountName 参数并没有使用占位符和预编译，使用的是直接拼接的方式
       } catch (Exception e) {
         return failed(this)
             .output(
@@ -80,8 +82,7 @@ public class SqlInjectionLesson5b extends AssignmentEndpoint {
       }
 
       query.setInt(1, count);
-      // String query = "SELECT * FROM user_data WHERE Login_Count = " + login_count + " and userid
-      // = " + accountName, ;
+      // String query = "SELECT * FROM user_data WHERE Login_Count = " + login_count + " and userid= " + accountName;
       try {
         ResultSet results = query.executeQuery();
 
