@@ -20,6 +20,13 @@ public class XOREncode {
 //                System.out.printf("Key: 0x%02X -> Decoded String: %s%n", key, decodedStr);
 //            }
         }
+
+//        String path = "../../etc/passwd";
+//        if (!path.contains("./")) {
+//            System.out.println("Path does not contain './'");
+//        } else {
+//            System.out.println("Path contains './'");
+//        }
     }
 
     private static byte[] xorDecode(byte[] dataBytes, byte key) {
