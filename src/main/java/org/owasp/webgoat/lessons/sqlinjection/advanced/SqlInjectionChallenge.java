@@ -66,6 +66,7 @@ public class SqlInjectionChallenge extends AssignmentEndpoint {
         String checkUserQuery =
             "select userid from sql_challenge_users where userid = '" + username_reg + "'";
         Statement statement = connection.createStatement();
+        // 这里执行了 sql 语句，但是后面并没有回显
         ResultSet resultSet = statement.executeQuery(checkUserQuery);
 
         if (resultSet.next()) {
@@ -75,6 +76,7 @@ public class SqlInjectionChallenge extends AssignmentEndpoint {
             attackResult = failed(this).feedback("user.exists").feedbackArgs(username_reg).build();
           }
         } else {
+          // 这里采用了预编译
           PreparedStatement preparedStatement =
               connection.prepareStatement("INSERT INTO sql_challenge_users VALUES (?, ?, ?)");
           preparedStatement.setString(1, username_reg);
