@@ -38,7 +38,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class SqlInjectionLesson10a extends AssignmentEndpoint {
 
   private String[] results = {
-    "getConnection", "PreparedStatement", "prepareStatement", "?", "?", "setString", "setString"
+        "getConnection", "PreparedStatement", "prepareStatement", "?", "?", "setString", "setString"
   };
 
   @PostMapping("/SqlInjectionMitigations/attack10a")

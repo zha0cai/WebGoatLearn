@@ -71,6 +71,27 @@ public class ProfileZipSlip extends ProfileUploadBase {
       while (entries.hasMoreElements()) {
         ZipEntry e = entries.nextElement();
         File f = new File(tmpZipDirectory.toFile(), e.getName());
+
+          // 防止路径穿越
+          String canonicalDestinationDir = tmpZipDirectory.toFile().getCanonicalPath(); // 获取上传目录
+          String canonicalDestinationFile = f.getCanonicalPath(); // 获取上传的文件路径
+
+          if (!canonicalDestinationFile.startsWith(canonicalDestinationDir + File.separator)) {
+              throw new SecurityException("Entry is outside of the target dir: " + e.getName());
+          }
+
+          // 如果条目是目录，则创建目录
+          if (e.isDirectory()) {
+              f.mkdirs();
+              continue;
+          }
+
+          // 确保父目录存在
+          File parentFile = f.getParentFile();
+          if (parentFile != null) {
+              parentFile.mkdirs();
+          }
+
         InputStream is = zip.getInputStream(e);
         Files.copy(is, f.toPath(), StandardCopyOption.REPLACE_EXISTING);
       }
