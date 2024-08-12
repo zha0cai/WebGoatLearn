@@ -74,6 +74,7 @@ public class AccountVerificationHelper {
 
   public boolean verifyAccount(Integer userId, HashMap<String, String> submittedQuestions) {
     // short circuit if no questions are submitted
+    // 校验答案数量是否和用户设置的一致
     if (submittedQuestions.entrySet().size() != secQuestionStore.get(verifyUserId).size()) {
       return false;
     }
